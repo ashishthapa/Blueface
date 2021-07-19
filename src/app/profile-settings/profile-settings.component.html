@@ -1,0 +1,22 @@
+<div>
+    <h1> {{getTitle()}} </h1>
+    <div>
+        <p>Username: {{getUsername()}}</p>
+    </div>
+    <div>
+        <form [formGroup]="profileForm">
+
+            <label for="firstname">First Name: </label>
+            <input id="firstname" type="text" formControlName="firstName">
+          
+            <label for="lastname">Last Name: </label>
+            <input id="lastname" type="text" formControlName="lastName">
+            
+            <input type="button" value="Save">
+          </form>
+
+    </div>
+    <p>Loading profile...</p>
+    <p>Saving profile</p>
+    <p>Error!</p>
+</div>
