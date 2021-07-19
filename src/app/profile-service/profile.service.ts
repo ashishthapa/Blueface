@@ -7,8 +7,6 @@ export interface IProfile {
   age      : number;
 }
 
-
-
 @Injectable({
   providedIn: 'root'
 })
