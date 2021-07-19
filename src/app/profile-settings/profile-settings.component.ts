@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { IProfile, ProfileService } from '../profile-service/profile.service';
-
-import { from } from 'rxjs';
+import {ThemePalette} from '@angular/material/core';
 
 
 @Component({
@@ -14,6 +13,11 @@ export class ProfileSettingsComponent implements OnInit {
   
   private title = 'Profile'
   private user!: IProfile;
+  private loadingProfile: boolean = false;
+  private savingProfile: boolean = false;
+  private errorOccurred: boolean = false;
+  private formFieldsDisabled = false;
+
   public profileForm = new FormGroup({
     firstName: new FormControl(''),
     lastName: new FormControl(''),
@@ -23,6 +27,8 @@ export class ProfileSettingsComponent implements OnInit {
   constructor(private profile: ProfileService) { }
 
   ngOnInit(): void {
+    this.setIsLoadingProfile(true);
+    this.toggleFormState()
     this.loadProfile();
   }
 
@@ -59,6 +65,8 @@ export class ProfileSettingsComponent implements OnInit {
         firstName : this.getUser().firstName,
         lastName  : this.getUser().lastName
       })
+      this.setIsLoadingProfile(false);
+      this.toggleFormState()
     }
   }
 
@@ -80,5 +88,37 @@ export class ProfileSettingsComponent implements OnInit {
   public showError() {
 
   }
+
+  public isLoadingProfile(): boolean {
+    return this.loadingProfile;
+  }
+
+  public isSavingProfile(): boolean {
+    return this.savingProfile;
+  }
+
+  public isErrorOccured(): boolean {
+    return this.errorOccurred;
+  }
+
+  public setIsLoadingProfile(isLoading:boolean) {
+    return this.loadingProfile = isLoading;
+  }
+
+  public setIssavingProfile(isSaving: boolean): boolean {
+    return this.savingProfile = isSaving;
+  }
+
+  public setIsErrorOccured (isError:boolean): boolean {
+    return this.errorOccurred = isError;
+  }
+
+  public toggleFormState() {
+    this.formFieldsDisabled = !this.formFieldsDisabled;
+    const state = this.formFieldsDisabled ? 'disable' : 'enable';
+    Object.keys(this.profileForm.controls).forEach((controlName) => {
+        this.profileForm.controls[controlName][state]();
+    });
+}
 
 }

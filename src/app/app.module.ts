@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
+
 import { AppComponent } from './app.component';
 import { ProfileSettingsComponent } from './profile-settings/profile-settings.component';
 
@@ -13,7 +14,7 @@ import { ProfileSettingsComponent } from './profile-settings/profile-settings.co
     ],
   imports: [
     BrowserModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [
     ReactiveFormsModule

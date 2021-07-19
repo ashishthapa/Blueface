@@ -16,7 +16,7 @@
           </form>
 
     </div>
-    <p>Loading profile...</p>
-    <p>Saving profile</p>
-    <p>Error!</p>
+    <p *ngIf="isLoadingProfile()">Loading profile...</p>
+    <p *ngIf="isSavingProfile()">Saving profile</p>
+    <p *ngIf="isErrorOccured()">Error!</p>
 </div>
