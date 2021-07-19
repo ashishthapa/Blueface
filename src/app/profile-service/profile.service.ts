@@ -33,11 +33,14 @@ export class ProfileService {
     });
   }
 
-  setName(firstName: string) {
+  setName(firstName: string, lastName: string) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
+        console.log(firstName);
+        console.log(this.user);
           if (Math.round(Math.random())) {
           this.user.firstName = firstName;
+          this.user.lastName  = lastName;
           resolve(this.user);
         } else {
          reject({ error: 'Invalid name' });

@@ -13,6 +13,7 @@ export class ProfileSettingsComponent implements OnInit {
   
   private title = 'Profile'
   private user!: IProfile;
+  private errorMessage: string = '';
   private loadingProfile: boolean = false;
   private savingProfile: boolean = false;
   private errorOccurred: boolean = false;
@@ -55,10 +56,6 @@ export class ProfileSettingsComponent implements OnInit {
 
   }
 
-  public getTitle(): string {
-    return this.title;
-  }
-
   private populateNames() {
     if(this.getUser() && this.getUser().firstName && this.getUser().lastName) {
       this.profileForm.patchValue({
@@ -67,6 +64,43 @@ export class ProfileSettingsComponent implements OnInit {
       })
       this.setIsLoadingProfile(false);
       this.toggleFormState()
+    }
+  }
+  
+  public onSubmit() {
+    this.setIssavingProfile(true);
+    this.setIsErrorOccured(false);
+    this.toggleFormState();
+    let firstName = this.profileForm.value['firstName'];
+    let lastName = this.profileForm.value['lastName'];
+    console.log(firstName);
+    this.profile.setName(firstName, lastName).then((user) => {
+      console.log(user);
+      this.profileForm.patchValue({
+        firstName :  (user as IProfile)['firstName'],
+        lastName  :  (user as IProfile)['lastName']
+      })
+    }).catch((err) => {
+      console.log(err.error)
+      this.setIsErrorOccured(true);
+      this.setErrorMessage(err.error);
+    }).finally(() => {
+      this.setIssavingProfile(false);
+      this.toggleFormState();
+    });
+  }
+
+  public getTitle(): string {
+    return this.title;
+  }
+
+  public getErrorMessage(): string {
+    return this.errorMessage;
+  }
+
+  private setErrorMessage(errorMessage: string) {
+    if(errorMessage) {
+      this.errorMessage = errorMessage;
     }
   }
 
