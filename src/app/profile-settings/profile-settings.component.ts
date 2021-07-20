@@ -18,6 +18,8 @@ export class ProfileSettingsComponent implements OnInit {
   private savingProfile: boolean = false;
   private errorOccurred: boolean = false;
   private formFieldsDisabled = false;
+  private firstName:string = '';
+  private lastName:string = '';
 
   public profileForm: FormGroup; 
 
@@ -79,9 +81,9 @@ export class ProfileSettingsComponent implements OnInit {
     this.setIssavingProfile(true);
     this.setIsErrorOccured(false);
     this.toggleFormState();
-    let firstName = this.profileForm.value['firstName'];
-    let lastName = this.profileForm.value['lastName'];
-    this.profile.setName(firstName, lastName).then((user) => {
+    this.firstName = this.profileForm.value['firstName'];
+    this.lastName = this.profileForm.value['lastName'];
+    this.profile.setName(this.firstName, this.lastName).then((user) => {
       console.log(user);
       this.profileForm.patchValue({
         firstName :  (user as IProfile)['firstName'],
@@ -111,7 +113,11 @@ export class ProfileSettingsComponent implements OnInit {
     }).catch((err)=>{
       console.log('error while generating email', err.error);
       if(err.error === 'Error on Email Generation') {
-        this.profileForm.patchValue({email:''});
+        this.profileForm.patchValue({
+          firstName: this.firstName,
+          lastName: this.lastName,
+          email:''
+        });
       }
       this.setIsErrorOccured(true);
       this.setErrorMessage(err.error);
