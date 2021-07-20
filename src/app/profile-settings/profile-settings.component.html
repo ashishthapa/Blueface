@@ -8,10 +8,12 @@
 
             <label for="firstname">First Name: </label>
             <input id="firstname" type="text" formControlName="firstName">
-          
+            <br/><br/>
             <label for="lastname">Last Name: </label>
             <input id="lastname" type="text" formControlName="lastName">
-            
+            <br/>
+            <p>Email: <label *ngIf="getUserEmail()">{{getUserEmail()}}</label></p>
+            <br/>
             <input type="button" value="Save" (click)="onSubmit()">
           </form>
 

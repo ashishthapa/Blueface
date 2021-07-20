@@ -21,7 +21,7 @@ export class ProfileSettingsComponent implements OnInit {
 
   public profileForm = new FormGroup({
     firstName: new FormControl(''),
-    lastName: new FormControl(''),
+    lastName: new FormControl('')
   });
 
 
@@ -45,7 +45,6 @@ export class ProfileSettingsComponent implements OnInit {
         console.log('no response', response);
       }
     }).catch((err) => {
-      // console.log(err.error);
       this.loadProfile();
     }).finally(()=> {
 
@@ -60,7 +59,7 @@ export class ProfileSettingsComponent implements OnInit {
     if(this.getUser() && this.getUser().firstName && this.getUser().lastName) {
       this.profileForm.patchValue({
         firstName : this.getUser().firstName,
-        lastName  : this.getUser().lastName
+        lastName  : this.getUser().lastName,
       })
       this.setIsLoadingProfile(false);
       this.toggleFormState()
@@ -79,7 +78,8 @@ export class ProfileSettingsComponent implements OnInit {
       this.profileForm.patchValue({
         firstName :  (user as IProfile)['firstName'],
         lastName  :  (user as IProfile)['lastName']
-      })
+      });
+      this.handleEmail(user as IProfile);
     }).catch((err) => {
       console.log(err.error)
       this.setIsErrorOccured(true);
@@ -88,6 +88,20 @@ export class ProfileSettingsComponent implements OnInit {
       this.setIssavingProfile(false);
       this.toggleFormState();
     });
+  }
+
+  private handleEmail(user: IProfile) {
+    this.profile.setUserEmail(user).then((user) => {
+      console.log(user);
+    })
+  }
+
+  public getUserEmail() {
+    if(this.getUser()) {
+      return this.getUser().email;
+    } else {
+      return '';
+    }
   }
 
   public getTitle(): string {
