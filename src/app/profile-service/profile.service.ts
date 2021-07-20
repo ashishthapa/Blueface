@@ -14,6 +14,7 @@ export interface IProfile {
 export class ProfileService {
   private emailDomain: string = '@blueface.com';
   public user!: IProfile;
+  private emailPattern:RegExp =  /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
 
   constructor() { }
   getProfileUser(): Promise<IProfile> {
@@ -38,8 +39,6 @@ export class ProfileService {
   setName(firstName: string, lastName: string) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        console.log(firstName);
-        console.log(this.user);
           if (Math.round(Math.random())) {
           this.user.firstName = firstName;
           this.user.lastName  = lastName;
@@ -52,13 +51,17 @@ export class ProfileService {
   }
 
   private constructEmail(user:IProfile): IProfile {
-    user.email = user.firstName.replace(/\s+/g, '') + '.' + user.lastName.replace(/\s+/g, '') + this.emailDomain;
+    user.email = user.firstName.replace(/\s+/g, '').toLowerCase() + '.' + user.lastName.replace(/\s+/g, '').toLowerCase() + this.emailDomain;
     return user;
    }
 
-  //  private validateEmail(user) {
-
-  //  }
+   private validateEmail(user: IProfile) {
+     let email = user.email;
+     console.log(email);
+    let isEmailValid = this.emailPattern.test(email);
+    console.log(isEmailValid);
+    return isEmailValid;
+   }
 
   setUserEmail(user: IProfile) {
     return new Promise((resolve, reject) => {
@@ -67,7 +70,11 @@ export class ProfileService {
           if (Math.round(Math.random())) {
           if(user && user.firstName && user.lastName) {
             console.log(this.constructEmail(user));
-            resolve(user)
+            let toValidateUser = this.constructEmail({...user});
+            console.log('validatedUser', toValidateUser);
+            let validatedUser = this.validateEmail(toValidateUser);
+            console.log('validatedUser', validatedUser);
+            resolve(validatedUser);
           } 
           resolve(this.user);
         } else {

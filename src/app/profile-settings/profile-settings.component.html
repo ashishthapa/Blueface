@@ -12,13 +12,17 @@
             <label for="lastname">Last Name: </label>
             <input id="lastname" type="text" formControlName="lastName">
             <br/>
-            <p>Email: <label *ngIf="getUserEmail()">{{getUserEmail()}}</label></p>
+            <br/><br/>
+            <label for="email">Email: </label>
+            <input id="email" type="email" formControlName="email">
             <br/>
-            <input type="button" value="Save" (click)="onSubmit()">
+            <!-- <p>Email: <label *ngIf="getUserEmail()">{{getUserEmail()}}</label></p> -->
+            <br/>
+            <input type="button" value="Save" (click)="onSave()">
           </form>
 
     </div>
     <p *ngIf="isLoadingProfile()">Loading profile...</p>
     <p *ngIf="isSavingProfile()">Saving profile</p>
-    <p *ngIf="isErrorOccured()">Error! {{getErrorMessage()}}</p>
+    <p *ngIf="isErrorOccured()">{{getErrorMessage()}}</p>
 </div>

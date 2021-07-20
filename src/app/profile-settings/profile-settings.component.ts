@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { IProfile, ProfileService } from '../profile-service/profile.service';
 import {ThemePalette} from '@angular/material/core';
 
@@ -19,23 +19,30 @@ export class ProfileSettingsComponent implements OnInit {
   private errorOccurred: boolean = false;
   private formFieldsDisabled = false;
 
-  public profileForm = new FormGroup({
-    firstName: new FormControl(''),
-    lastName: new FormControl('')
-  });
+  public profileForm: FormGroup; 
 
 
-  constructor(private profile: ProfileService) { }
+  constructor(private profile: ProfileService, private fb: FormBuilder) { 
+    
+    this.profileForm = this.fb.group({
+      firstName: new FormControl(''),
+      lastName: new FormControl(''),
+      email: new FormControl({value:'', disabled:true})
+    });
+  }
 
   ngOnInit(): void {
     this.setIsLoadingProfile(true);
     this.toggleFormState()
     this.loadProfile();
+    // this.profileForm.controls['firstName'].valueChanges.subscribe((val) => {
+    //   console.log(val);
+    //   this.setIsErrorOccured(false);
+    // })
   }
 
   loadProfile() {
     this.profile.getProfileUser().then((response) =>{
-      console.log('response is ', response);
       if(response) {
         this.setUser(response);
         if(response.firstName && response.lastName) {
@@ -47,7 +54,7 @@ export class ProfileSettingsComponent implements OnInit {
     }).catch((err) => {
       this.loadProfile();
     }).finally(()=> {
-
+      this.disableEmailInputField();
     });
   }
 
@@ -55,24 +62,25 @@ export class ProfileSettingsComponent implements OnInit {
 
   }
 
+
   private populateNames() {
     if(this.getUser() && this.getUser().firstName && this.getUser().lastName) {
       this.profileForm.patchValue({
         firstName : this.getUser().firstName,
         lastName  : this.getUser().lastName,
+        email     : this.getUser().email
       })
       this.setIsLoadingProfile(false);
       this.toggleFormState()
     }
   }
   
-  public onSubmit() {
+  public onSave() {
     this.setIssavingProfile(true);
     this.setIsErrorOccured(false);
     this.toggleFormState();
     let firstName = this.profileForm.value['firstName'];
     let lastName = this.profileForm.value['lastName'];
-    console.log(firstName);
     this.profile.setName(firstName, lastName).then((user) => {
       console.log(user);
       this.profileForm.patchValue({
@@ -83,17 +91,33 @@ export class ProfileSettingsComponent implements OnInit {
     }).catch((err) => {
       console.log(err.error)
       this.setIsErrorOccured(true);
-      this.setErrorMessage(err.error);
+      this.setErrorMessage('Error! '+err.error);
     }).finally(() => {
       this.setIssavingProfile(false);
       this.toggleFormState();
     });
   }
 
+  private disableEmailInputField() {
+    this.profileForm.get('email')?.disable();
+  }
+
   private handleEmail(user: IProfile) {
     this.profile.setUserEmail(user).then((user) => {
       console.log(user);
-    })
+      this.profileForm.patchValue({
+        email : (user as IProfile).email
+      })
+    }).catch((err)=>{
+      console.log('error while generating email', err.error);
+      if(err.error === 'Error on Email Generation') {
+        this.profileForm.patchValue({email:''});
+      }
+      this.setIsErrorOccured(true);
+      this.setErrorMessage(err.error);
+    }).finally(()=>{
+
+    });
   }
 
   public getUserEmail() {
