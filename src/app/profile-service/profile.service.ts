@@ -60,7 +60,7 @@ export class ProfileService {
      console.log(email);
     let isEmailValid = this.emailPattern.test(email);
     console.log(isEmailValid);
-    return isEmailValid;
+    return {isEmailValid, email};
    }
 
   setUserEmail(user: IProfile) {
@@ -76,7 +76,8 @@ export class ProfileService {
             console.log('validatedUser', validatedUser);
             resolve(validatedUser);
           } 
-          resolve(this.user);
+          // resolve(this.user);
+          reject({ error: 'Error on Email Generation' });
         } else {
          reject({ error: 'Error on Email Generation' });
         }

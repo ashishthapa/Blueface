@@ -112,7 +112,7 @@ export class ProfileSettingsComponent implements OnInit {
       })
     }).catch((err)=>{
       console.log('error while generating email', err.error);
-      if(err.error === 'Error on Email Generation') {
+      if(err.error == 'Error on Email Generation') {
         this.profileForm.patchValue({
           firstName: this.firstName,
           lastName: this.lastName,
