@@ -29,5 +29,5 @@
     </div>
     <p *ngIf="isLoadingProfile()">Loading profile...</p>
     <p *ngIf="isSavingProfile()">Saving profile</p>
-    <p *ngIf="isErrorOccured()">{{getErrorMessage()}}</p>
+    <p *ngIf="isErrorOccured()==true">{{getErrorMessage()}}</p>
 </div>

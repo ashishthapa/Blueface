@@ -43,7 +43,7 @@ export class ProfileSettingsComponent implements OnInit {
     * Wait for 1 ms and check for input fields actually change. 
     */
     this.profileForm.controls['firstName'].valueChanges.pipe(
-      debounceTime(100), 
+      // debounceTime(100), : Using debounce creating issues with Error generation : TODO if have time: debug this.
       distinctUntilChanged()).subscribe((val) => {
       let tempFName = val;
       let tempLName = this.profileForm.value['lastName'];
@@ -51,7 +51,7 @@ export class ProfileSettingsComponent implements OnInit {
     });
 
     this.profileForm.controls['lastName'].valueChanges.pipe(
-      debounceTime(100), 
+      // debounceTime(100), : Using debounce creating issues with Error generation : TODO if have time: debug this.
       distinctUntilChanged()).subscribe((val) => {
       let tempFName = this.profileForm.value['firstName'];;
       let tempLName = val.lastName;
@@ -117,9 +117,9 @@ export class ProfileSettingsComponent implements OnInit {
     this.setIsErrorOccured(false);
     this.setIssavingProfile(true);
     this.toggleFormState();
-    this.firstName = this.profileForm.value['firstName'];
-    this.lastName = this.profileForm.value['lastName'];
-    this.profile.setName(this.firstName, this.lastName).then((user) => {
+    let tempFirstName = this.profileForm.value['firstName'];
+    let tempLastName = this.profileForm.value['lastName'];
+    this.profile.setName(tempFirstName, tempLastName).then((user) => {
       console.log(user);
       this.setIsErrorOccured(false);
       this.profileForm.patchValue({
@@ -149,10 +149,10 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   private handleEmail(user: IProfile) {
-    this.profile.setUserEmail(user).then((user) => {
-      console.log(user);
+    this.profile.setUserEmail(user).then((validatedUserEmail) => {
+      console.log(validatedUserEmail);
       this.profileForm.patchValue({
-        email : (user as IProfile).email
+        email : (validatedUserEmail as IProfile).email
       })
     }).catch((err)=>{
       console.log('error while generating email', err.error);
