@@ -71,7 +71,7 @@ export class ProfileService {
           if(user && user.firstName && user.lastName) {
             console.log(this.constructEmail(user));
             let toValidateUser = this.constructEmail({...user});
-            console.log('validatedUser', toValidateUser);
+            console.log('toValidateUser', toValidateUser);
             let validatedUser = this.validateEmail(toValidateUser);
             console.log('validatedUser', validatedUser);
             resolve(validatedUser);

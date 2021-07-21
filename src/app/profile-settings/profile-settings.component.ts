@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { IProfile, ProfileService } from '../profile-service/profile.service';
-import {ThemePalette} from '@angular/material/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 
 @Component({
@@ -31,16 +31,26 @@ export class ProfileSettingsComponent implements OnInit {
       lastName: new FormControl(''),
       email: new FormControl({value:'', disabled:true})
     });
+
   }
 
   ngOnInit(): void {
     this.setIsLoadingProfile(true);
     this.toggleFormState()
     this.loadProfile();
-    // this.profileForm.controls['firstName'].valueChanges.subscribe((val) => {
-    //   console.log(val);
-    //   this.setIsErrorOccured(false);
-    // })
+    /*
+    * Remove Error message if Input fields change & Error message exists
+    * Wait for 1 ms and check for input fields actually change. 
+    */
+    this.profileForm.valueChanges.pipe(
+      debounceTime(1000), 
+      distinctUntilChanged()).subscribe((val) => {
+      let tempFName = val.firstName;
+      let tempLName = val.lastName;
+      if(this.isErrorOccured() && (this.firstName != tempFName || this.lastName != tempLName)) {
+        this.setIsErrorOccured(false);
+      }
+    });
   }
 
   loadProfile() {
