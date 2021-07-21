@@ -1,30 +1,40 @@
 <div>
-    <h3>Select the language</h3>
-    <button class="langButton">English</button> <button class="langButton">French</button> <button class="langButton">Spanish</button>
+    <h3>Select the language
+        <label>
+            <select #langSelect (change)="translate.use(langSelect.value)">
+                <option *ngFor="let lang of translate.getLangs()" [value]="lang"
+                    [selected]="lang === translate.currentLang">{{ lang }}</option>
+            </select>
+        </label>
+    </h3>
 </div>
-<div>
 
-    <h1 i18n="@@pageTitle"> {{getTitle()}} </h1>
+<div>
+    <div>
+        <h2>{{ 'PROFILE.TITLE' | translate }}</h2>
+    </div>
+
     <div>
         <p>Username: {{getUsername()}}</p>
     </div>
     <div>
-        <form [formGroup]="profileForm" > <!-- Using onclick in input... as provided in usecase (ngSubmit)="onSubmit()"-->
+        <form [formGroup]="profileForm">
+            <!-- Using onclick in input... as provided in usecase (ngSubmit)="onSubmit()"-->
 
             <label for="firstname">First Name: </label>
             <input id="firstname" type="text" formControlName="firstName">
-            <br/><br/>
+            <br /><br />
             <label for="lastname">Last Name: </label>
             <input id="lastname" type="text" formControlName="lastName">
-            <br/>
-            <br/><br/>
+            <br />
+            <br /><br />
             <label for="email">Email: </label>
             <input id="email" type="email" formControlName="email">
-            <br/>
+            <br />
             <!-- <p>Email: <label *ngIf="getUserEmail()">{{getUserEmail()}}</label></p> -->
-            <br/>
+            <br />
             <input type="button" value="Save" (click)="onSave()">
-          </form>
+        </form>
 
     </div>
     <p *ngIf="isLoadingProfile()">Loading profile...</p>
