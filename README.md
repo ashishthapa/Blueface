@@ -1,11 +1,11 @@
-#**** Custom Info    ********
+# **** Custom Info    ********
 
 This project uses Angular Cli. 
 Install node modules (npm install)
 To run ng serve -o to open in browser
 It uses ngx-translate for translation (https://github.com/ngx-translate/core for more info)
 
-#**** Custom Info Ends ******
+# **** Custom Info Ends ******
 
 
 # ****    This part existed before *****
