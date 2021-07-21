@@ -32,9 +32,7 @@ export class ProfileSettingsComponent implements OnInit {
     this.translate = trans;
     this.translate.addLangs(['en', 'fr', 'es']);
     this.translate.setDefaultLang('en');
-
     const browserLang = this.translate.getBrowserLang();
-    console.log(browserLang);
     this.translate.use(browserLang.match(/en|fr/) ? browserLang : 'en');
 
     this.profileForm = this.fb.group({
@@ -73,8 +71,6 @@ export class ProfileSettingsComponent implements OnInit {
 
   private handleNameControlsChange(tempFName: string, tempLName: string) {
     if (this.isErrorOccured() && (this.firstName != tempFName || this.lastName != tempLName)) {
-      console.log('is error occured', this.isErrorOccured);
-      console.log('is error occured', this.isErrorOccured());
       this.emptyEmailInputField();
       this.setIsErrorOccured(false);
     }
@@ -83,7 +79,6 @@ export class ProfileSettingsComponent implements OnInit {
   loadProfile() {
     this.profile.getProfileUser().then((response) => {
       if (response && response.firstName && response.lastName) {
-        console.log(response);
         this.setUser(response);
         if (this.getUser() && this.getUser().firstName && this.getUser().lastName) {
           this.initializeNames();
@@ -123,7 +118,6 @@ export class ProfileSettingsComponent implements OnInit {
     this.profileForm.patchValue({
       email: ''
     });
-    console.log(this.profileForm);
     // debugger;
     this.setIsErrorOccured(false);
     this.setIssavingProfile(true);
@@ -131,7 +125,6 @@ export class ProfileSettingsComponent implements OnInit {
     let tempFirstName = this.profileForm.value['firstName'];
     let tempLastName = this.profileForm.value['lastName'];
     this.profile.setName(tempFirstName, tempLastName).then((user) => {
-      console.log(user);
       this.setIsErrorOccured(false);
       this.profileForm.patchValue({
         firstName: (user as IProfile)['firstName'],
@@ -141,7 +134,6 @@ export class ProfileSettingsComponent implements OnInit {
     }).catch((err) => {
       let error = 'Error! ';
       error = error.concat(err.error)
-      console.log(error);
       this.setIsErrorOccured(true);
       this.setErrorMessage(error);
     }).finally(() => {
@@ -161,12 +153,10 @@ export class ProfileSettingsComponent implements OnInit {
 
   private handleEmail(user: IProfile) {
     this.profile.setUserEmail(user).then((validatedUserEmail) => {
-      console.log(validatedUserEmail);
       this.profileForm.patchValue({
         email: (validatedUserEmail as IProfile).email
       })
     }).catch((err) => {
-      console.log('error while generating email', err.error);
       if (err.error == 'Error on Email Generation') {
         this.profileForm.patchValue({
           firstName: this.firstName,
