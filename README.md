@@ -1,3 +1,13 @@
+**** Custom Info    ********
+
+This project uses Angular Cli. 
+Install node modules (npm install)
+To run ng serve -o to open in browser
+It uses ngx-translate for translation (https://github.com/ngx-translate/core for more info)
+**** Custom Info Ends ******
+
+
+****    This part existed before *****
 # Frontend
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.1.2.
