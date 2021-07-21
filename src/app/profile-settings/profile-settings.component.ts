@@ -29,9 +29,9 @@ export class ProfileSettingsComponent implements OnInit {
     this.profileForm = this.fb.group({
       firstName: new FormControl(''),
       lastName: new FormControl(''),
-      email: new FormControl({value:'', disabled:true})
+      email: new FormControl('')
     });
-
+    this.disableEmailInputField();
   }
 
   ngOnInit(): void {
@@ -45,33 +45,28 @@ export class ProfileSettingsComponent implements OnInit {
     this.profileForm.controls['firstName'].valueChanges.pipe(
       debounceTime(100), 
       distinctUntilChanged()).subscribe((val) => {
-      let tempFName = val.firstName;
-      let tempLName = val.lastName;
-      if(this.isErrorOccured() && (this.firstName != tempFName || this.lastName != tempLName)) {
-        // this.setIsErrorOccured(false);
-        console.log('is error occured', this.isErrorOccured);
-        console.log('is error occured', this.isErrorOccured());
-        this.emptyEmailInputField();
-        this.setIsErrorOccured(false);
-      }
+      let tempFName = val;
+      let tempLName = this.profileForm.value['lastName'];
+      this.handleNameControlsChange(tempFName, tempLName);
     });
+
     this.profileForm.controls['lastName'].valueChanges.pipe(
       debounceTime(100), 
       distinctUntilChanged()).subscribe((val) => {
-      let tempFName = val.firstName;
+      let tempFName = this.profileForm.value['firstName'];;
       let tempLName = val.lastName;
-      if(this.isErrorOccured() && (this.firstName != tempFName || this.lastName != tempLName)) {
-        // this.setIsErrorOccured(false);
+      this.handleNameControlsChange(tempFName, tempLName)
+    });
+
+  }
+
+  private handleNameControlsChange(tempFName: string, tempLName: string) {
+       if(this.isErrorOccured() && (this.firstName != tempFName || this.lastName != tempLName)) {
         console.log('is error occured', this.isErrorOccured);
         console.log('is error occured', this.isErrorOccured());
         this.emptyEmailInputField();
         this.setIsErrorOccured(false);
       }
-    });
-  }
-
-  private handleNameControlsChange(val) {
-
   }
 
   loadProfile() {
@@ -114,6 +109,11 @@ export class ProfileSettingsComponent implements OnInit {
   }
   
   public onSave() {
+    this.profileForm.patchValue({
+      email: ''
+    });
+    console.log(this.profileForm);
+    // debugger;
     this.setIsErrorOccured(false);
     this.setIssavingProfile(true);
     this.toggleFormState();
@@ -136,6 +136,7 @@ export class ProfileSettingsComponent implements OnInit {
     }).finally(() => {
       this.setIssavingProfile(false);
       this.toggleFormState();
+      this.disableEmailInputField();
     });
   }
 
@@ -165,7 +166,7 @@ export class ProfileSettingsComponent implements OnInit {
       this.setIsErrorOccured(true);
       this.setErrorMessage(err.error);
     }).finally(()=>{
-
+      this.disableEmailInputField()
     });
   }
 
