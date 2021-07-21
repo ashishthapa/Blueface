@@ -42,23 +42,46 @@ export class ProfileSettingsComponent implements OnInit {
     * Remove Error message if Input fields change & Error message exists
     * Wait for 1 ms and check for input fields actually change. 
     */
-    this.profileForm.valueChanges.pipe(
-      debounceTime(1000), 
+    this.profileForm.controls['firstName'].valueChanges.pipe(
+      debounceTime(100), 
       distinctUntilChanged()).subscribe((val) => {
       let tempFName = val.firstName;
       let tempLName = val.lastName;
       if(this.isErrorOccured() && (this.firstName != tempFName || this.lastName != tempLName)) {
+        // this.setIsErrorOccured(false);
+        console.log('is error occured', this.isErrorOccured);
+        console.log('is error occured', this.isErrorOccured());
+        this.emptyEmailInputField();
+        this.setIsErrorOccured(false);
+      }
+    });
+    this.profileForm.controls['lastName'].valueChanges.pipe(
+      debounceTime(100), 
+      distinctUntilChanged()).subscribe((val) => {
+      let tempFName = val.firstName;
+      let tempLName = val.lastName;
+      if(this.isErrorOccured() && (this.firstName != tempFName || this.lastName != tempLName)) {
+        // this.setIsErrorOccured(false);
+        console.log('is error occured', this.isErrorOccured);
+        console.log('is error occured', this.isErrorOccured());
+        this.emptyEmailInputField();
         this.setIsErrorOccured(false);
       }
     });
   }
 
+  private handleNameControlsChange(val) {
+
+  }
+
   loadProfile() {
     this.profile.getProfileUser().then((response) =>{
-      if(response) {
+      if(response && response.firstName && response.lastName) {
+        console.log(response);
         this.setUser(response);
-        if(response.firstName && response.lastName) {
-          this.populateNames();
+        if(this.getUser() && this.getUser().firstName && this.getUser().lastName) {
+          this.initializeNames();
+          this.populateFormWithNames();
         }
       } else {
         console.log('no response', response);
@@ -70,13 +93,17 @@ export class ProfileSettingsComponent implements OnInit {
     });
   }
 
+  initializeNames() {
+      this.firstName = this.getUser().firstName;
+      this.lastName  = this.getUser().lastName;
+  }
+
   saveProfile() {
 
   }
 
 
-  private populateNames() {
-    if(this.getUser() && this.getUser().firstName && this.getUser().lastName) {
+  private populateFormWithNames() {
       this.profileForm.patchValue({
         firstName : this.getUser().firstName,
         lastName  : this.getUser().lastName,
@@ -84,30 +111,36 @@ export class ProfileSettingsComponent implements OnInit {
       })
       this.setIsLoadingProfile(false);
       this.toggleFormState()
-    }
   }
   
   public onSave() {
-    this.setIssavingProfile(true);
     this.setIsErrorOccured(false);
+    this.setIssavingProfile(true);
     this.toggleFormState();
     this.firstName = this.profileForm.value['firstName'];
     this.lastName = this.profileForm.value['lastName'];
     this.profile.setName(this.firstName, this.lastName).then((user) => {
       console.log(user);
+      this.setIsErrorOccured(false);
       this.profileForm.patchValue({
         firstName :  (user as IProfile)['firstName'],
         lastName  :  (user as IProfile)['lastName']
       });
       this.handleEmail(user as IProfile);
     }).catch((err) => {
-      console.log(err.error)
+      let error = 'Error! ';
+      error = error.concat(err.error)
+      console.log(error);
       this.setIsErrorOccured(true);
-      this.setErrorMessage('Error! '+err.error);
+      this.setErrorMessage(error);
     }).finally(() => {
       this.setIssavingProfile(false);
       this.toggleFormState();
     });
+  }
+
+  private emptyEmailInputField() {
+    this.profileForm.get('email')?.patchValue('', {emitEvent:false});
   }
 
   private disableEmailInputField() {
@@ -153,9 +186,7 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   private setErrorMessage(errorMessage: string) {
-    if(errorMessage) {
-      this.errorMessage = errorMessage;
-    }
+      this.errorMessage = errorMessage;    
   }
 
   private setUser(user: IProfile) {
@@ -170,7 +201,7 @@ export class ProfileSettingsComponent implements OnInit {
   }
 
   public getUsername(): string {
-    return this.getUser() ? this.user.username: ''
+    return this.getUser() ? this.getUser().username: ''
   }
 
   public showError() {
@@ -197,7 +228,7 @@ export class ProfileSettingsComponent implements OnInit {
     return this.savingProfile = isSaving;
   }
 
-  public setIsErrorOccured (isError:boolean): boolean {
+  public setIsErrorOccured (isError:boolean) {
     return this.errorOccurred = isError;
   }
 
